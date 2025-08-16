@@ -1,7 +1,17 @@
 
 # Summary
 
-The goal here is to create a pgp key from a mostly air-gapped environment.
+The goal here is to create a pgp key from a (mostly) air gapped environment.
+
+## Background information
+
+Chapters 1 through 4 of the [OpenPGP Documentation](https://openpgp.dev/book/about.html) contains enough information to work with this guide (about 15 minutes read).
+
+GnuPG has a great [FAQ](https://www.gnupg.org/faq/gnupg-faq.html) that covers a lot of questions you might have about pgp.
+
+This guide should be valid for gpg `v2.4.7` and paperkey `1.6`.
+
+## Expected Results
 
 When we are done, we will have three things:
 1. A USB flash drive which contains a couple of files:
@@ -12,29 +22,35 @@ When we are done, we will have three things:
 
 The first secret subkey will have *encryption* capabilities and can be used to decrypt messages that colleagues might encrypt using the first public subkey.
 
-The second secret subkey will have *signing* capabilities and can be used to generate a signature for any artifacts that one might publish. Consumers of the artifacts can verify the signature using the second public subkey.
+![Screenshot of how encryption works in pgp](./images/PGP_encryption_diagram.svg)
 
-This guide should be valid for gpg `v2.4.7` and paperkey `1.6`.
+The second secret subkey will have *signing* capabilities and can be used to generate a signature for any artifact. Consumers of the artifacts can verify the artifacts are unmodified using the second public subkey.
+
+![Screenshot of how signatures work in pgp](./images/Private_key_signing.svg)
 
 ## Preparation
 
 We will need a few things:
 1. Flash drive **A** with ~3GB of space, enough to store the fedora KDE live environment
 2. Flash drive **B** with ~2GB of space, and the following binaries on the flash drive:
-  - [paperkey](https://packages.fedoraproject.org/pkgs/paperkey/paperkey/) binary
-  - (Optional) [qrencode](https://packages.fedoraproject.org/pkgs/qrencode/qrencode/) binary if printing a QR code instead of text.
-  - (Optional) [zbar](https://packages.fedoraproject.org/pkgs/zbar/zbar/) binary to verify that the QR code can be decoded.
+  - [paperkey](https://koji.fedoraproject.org/koji/packageinfo?packageID=5241) RPM
+  - (Optional) [qrencode](https://koji.fedoraproject.org/koji/packageinfo?packageID=10634) RPM if printing a QR code instead of text.
+  - (Optional) [zbar](https://koji.fedoraproject.org/koji/packageinfo?packageID=8926) RPM to verify that the QR code can be decoded.
 3. A printer that supports the IPP (Internet Printing Protocol)
 
 Load fedora KDE live environment onto a USB flash drive **A** according to instructions from [https://fedoraproject.org/kde/download](https://fedoraproject.org/kde/download)
 
-Download the paperkey binary from https://koji.fedoraproject.org/koji/packageinfo?packageID=5241 and put it on USB flash drive **B**.
+![Content of flash drive A](./images/2025-08-16_14-41.png)
+
+Download the paperkey RPM from https://koji.fedoraproject.org/koji/packageinfo?packageID=5241 and put it on USB flash drive **B**. Make sure that the version of fedora is the same as your live environment: version is determined by the `fc` suffix at the end of the RPM.
+
+![Content of dlash drive B](./images/2025-08-16_14-51.png)
 
 Restart the computer and modify the boot sequence so that flash drive **A** is first in the boot sequence.
 
-### Generate a primary key
+## Generate a primary key
 
-Open a terminal and run `gpg --full-generate-key` to interactively create a primary key. Options **RSA and RSA**, **DSA and Elgamal**, and **ECC (sign and encrypt)** will actually create both a primary key and a subkey. For now, we want to create just the primary key, so **DSA (sign only)**, **RSA (sign only)**, and **ECC (sign only)** are our options. ECC may be considered as not [quantum-resistant](https://www.netmeister.org/blog/pqc-2025-02.html), but I wasn't sure whether to choose **DSA** or **RSA**. We can choose either if we are prepared to revoke that key in the future.
+Open a terminal and run `gpg --full-generate-key` to interactively create a primary key. Options **RSA and RSA**, **DSA and Elgamal**, and **ECC (sign and encrypt)** will actually create both a primary key and a subkey. For now, we want to create just the primary key, so **DSA (sign only)**, **RSA (sign only)**, and **ECC (sign only)** are our options. ECC may be considered as less [quantum-resistant](https://www.netmeister.org/blog/pqc-2025-02.html) than RSA due to size of keys: quantum computing breaks traditional computing paradigms from which these algorithms were developed. GnuPG [recommends](https://www.gnupg.org/faq/gnupg-faq.html#recommended_ciphers) **RSA** over **DSA**.
 
 ```
 liveuser@localhost-live:~$ gpg --full-generate-key
@@ -115,7 +131,9 @@ $ gpg --list-public-keys
 pub   rsa4096 2025-08-12 [SC]
       0BC7BC277BDA7F1149E42F6650AE2C9FD834BD5F
 uid           [ultimate] Ward (https://huangw.dev) <ward@huangw.dev>
+```
 
+```
 $ gpg --list-secret-keys
 gpg: checking the trustdb
 gpg: marginals needed: 3  completes needed: 1  trust model: pgp
@@ -127,20 +145,13 @@ sec   rsa4096 2025-08-12 [SC]
 uid           [ultimate] Ward (https://huangw.dev) <ward@huangw.dev>
 ```
 
-### Generate your subkeys
+## Generate your subkeys
 
 We'll generate two subkeys next. One for encryption, and another for signing.
 
-The `gpg --edit-key <uid>` command will open a prompt. If you didn't try creating multiple keys, you should have only 1 keyring available to you right now.
+![Fig. 7 OpenPGP certificates can contain multiple subkeys.](./images/Binding_Subkeys.svg)
 
-In the prompt, type in the `addkey` command. After entering the command, you will be prompted several times.
-1. Select (sign only) as the subkey. We'll create one for encryption right after. You can use any algorithm you would like.
-2. Select 1 or 2 years as the expiration date.
-3. Type in `addkey` command again.
-4. Select (encrypt only) as the subkey. You can use any algorithm you would like.
-5. Select 1 or 2 years as the expiration date.
-6. CTRL+D to exit after everything is done
-7. Save your changes
+The `gpg --edit-key <uid>` command will open an interactive prompt. If you didn't try creating multiple keys, you should have only 1 keyring available to you right now, and it will be selected by default.
 
 ```
 $ gpg --edit-key 'Ward (https://huangw.dev) <ward@huangw.dev>'
@@ -155,6 +166,12 @@ sec  rsa4096/50AE2C9FD834BD5F
      trust: ultimate      validity: ultimate
 [ultimate] (1). Ward (https://huangw.dev) <ward@huangw.dev>
 
+gpg> 
+```
+
+In the interactive prompt, enter the `addkey` command and select one of the **(sign only)** options to create a key with signing capabilities.
+
+```
 gpg> addkey
 Please select what kind of key you want:
    (3) DSA (sign only)
@@ -165,11 +182,21 @@ Please select what kind of key you want:
   (12) ECC (encrypt only)
   (14) Existing key from card
 Your selection? 10
+```
+
+**Curve 25519** has a key bit size of 256. **NIST P-384** has a key bit size of 384, but some older computers might not support it.
+
+```
 Please select which elliptic curve you want:
    (1) Curve 25519 *default*
    (4) NIST P-384
    (6) Brainpool P-256
-Your selection? 1
+Your selection? 4
+```
+
+Set an expiration date of 1 or 2 years. It's generally a good habit to regularly rotate keys. If for example, a newer key is compromised, you can be sure that all messages prior to the creation of the new key may stay encrypted (or vice versa). GPG in particular is configured to always use the most recent key for encryption, even if multiple encryption keys are available.
+
+```
 Please specify how long the key should be valid.
          0 = key does not expire
       <n>  = key expires in n days
@@ -178,6 +205,11 @@ Please specify how long the key should be valid.
       <n>y = key expires in n years
 Key is valid for? (0) 1y
 Key expires at Wed 12 Aug 2026 02:45:15 AM UTC
+```
+
+Confirm yes.
+
+```
 Is this correct? (y/N) y
 Really create? (y/N) y
 We need to generate a lot of random bytes. It is a good idea to perform
@@ -191,7 +223,11 @@ sec  rsa4096/50AE2C9FD834BD5F
 ssb  ed25519/944ACBA688A9A117
      created: 2025-08-12  expires: 2026-08-12  usage: S
 [ultimate] (1). Ward (https://huangw.dev) <ward@huangw.dev>
+```
 
+Type the `addkey` command again. Select one of the **(encrypt only)** options to create an **encryption** subkey.
+
+```
 gpg> addkey
 Please select what kind of key you want:
    (3) DSA (sign only)
@@ -202,11 +238,21 @@ Please select what kind of key you want:
   (12) ECC (encrypt only)
   (14) Existing key from card
 Your selection? 12
+```
+
+Select one of the elliptic curves for the algorithm.
+
+```
 Please select which elliptic curve you want:
    (1) Curve 25519 *default*
    (4) NIST P-384
    (6) Brainpool P-256
-Your selection? 1
+Your selection? 4
+```
+
+Expire the key in 1 or 2 years.
+
+```
 Please specify how long the key should be valid.
          0 = key does not expire
       <n>  = key expires in n days
@@ -215,6 +261,11 @@ Please specify how long the key should be valid.
       <n>y = key expires in n years
 Key is valid for? (0) 1y
 Key expires at Wed 12 Aug 2026 02:56:26 AM UTC
+```
+
+Confirm your choices
+
+```
 Is this correct? (y/N) y
 Really create? (y/N) y
 We need to generate a lot of random bytes. It is a good idea to perform
@@ -232,12 +283,17 @@ ssb  cv25519/CDF21C7A234165F9
 [ultimate] (1). Ward (https://huangw.dev) <ward@huangw.dev>
 
 gpg>
+```
+
+`CTRL+D` to send the EOF signal to the prompt. Don't forget to save your changes!!
+
+```
 Save changes? (y/N) y
 ```
 
-### Generate a revocation certificate
+## Generate a revocation certificate
 
-If you ever lose access to your primary key, or your primary key is compromised, you can use a revocation certificate to revoke your primary key. The revocation certificate will take effect only when it is combined with the public portion of your primary key and distributed to the web. The private key is still more important to keep safe, but revocation can be your fallback mechanism. In this section, we'll generate a revocation certificate.
+If you ever lose access to your primary key, or your primary key is compromised, you can use a revocation certificate to revoke your primary key. The revocation certificate will take effect only when it is appended to your public keyring.
 
 Use the **uid** provided in the previous section to identify your key, and create a revocation certification for it.
 
@@ -276,7 +332,7 @@ your machine might store the data and make it available to others!
 
 Copy the terminal output starting from `-----BEGIN PGP PUBLIC KEY BLOCK-----` and ending after `-----END PGP PUBLIC KEY BLOCK-----` to your clipboard. Paste the content of the clipboard into a file of your choosing: e.g. `revocation-certificate-to-be-printed.txt`.
 
-### Export your public keyring
+## Export your public keyring
 
 Use the same **uid** from previous steps to export your public keyring: This contains the public portion of your primary key and subkeys. `--output` determines where the keyring should be saved. The order of arguments passed to gpg **does** affect the results.
 
@@ -286,7 +342,7 @@ $ gpg --output ~/my-public-key.gpg --export 'Ward (https://huangw.dev) <ward@hua
 
 Copy `~/my-public-key.gpg` to flash drive **B**.
 
-### Export the private portion of your primary key
+## Export the private portion of your primary key
 
 First, run the `gpg --list-secret-keys --with-subkey-fingerprint` to list all secret subkey fingerprints.
 
@@ -322,7 +378,7 @@ The `gpg --output my-secret-key.gpg --export-secret-keys 0BC7BC277BDA7F1149E42F6
 $ gpg --output my-secret-key.gpg --export-secret-keys 0BC7BC277BDA7F1149E42F6650AE2C9FD834BD5F!
 ```
 
-### Prepare secret bits of primary key for printing
+## Prepare secret bits of primary key for printing
 
 Next, we'll record the secret portions of your primay key in ascii format.
 
@@ -330,7 +386,7 @@ Next, we'll record the secret portions of your primay key in ascii format.
 $ paperkey --secret-key my-secret-key.gpg > secret-bits-to-be-printed.txt
 ```
 
-### Short summary/breather
+## Short summary/breather
 
 To summarize what we've done so far:
 1. We now have a public keyring containing your UID, a Signing/Certification primary key with no expiration date, a signing subkey with an expiration date, and an encryption subkey with an expiration date.
@@ -339,7 +395,7 @@ To summarize what we've done so far:
 
 We have one more thing left to do which is to export our secret subkeys. Before we do that, we're going to remove the primary key for our secrets keyring, and change the passphrase of our primary key. You might have noticed that we were required to enter our passphrase for several of the operations above. The subkeys are using the same passphrase as our primary key, but we wouldn't like a compromised passphrase on our subkeys to compromise our primary key as well. There is a way to change the passphrase on our subkeys without affecting the content of our primary key.
 
-### Change the passphrase on your subkeys
+## Change the passphrase on your subkeys
 
 First, list all fingerprints in your secret keyring
 
@@ -386,7 +442,7 @@ There is NO WARRANTY, to the extent permitted by law.
 gpg: key 50AE2C9FD834BD5F/50AE2C9FD834BD5F: error changing passphrase: No secret key
 ```
 
-### Export secret subkeys
+## Export secret subkeys
 
 Finally, we can export the subkeys that we'll be using on our main machines.
 
@@ -396,7 +452,7 @@ $ gpg --output my-secret-subkeys.gpg --export-secret-subkeys 'Ward (https://huan
 
 Copy `my-secret-subkeys.gpg` to Flash drive **B**
 
-### (Optional) Prepare QR code for revocation certificate
+## (Optional) Prepare QR code for revocation certificate
 
 If you want to print the revocation certificate as a QR code, you can use `qrencode`.
 
@@ -404,7 +460,7 @@ If you want to print the revocation certificate as a QR code, you can use `qrenc
 cat revocation-certificate-to-be-printed.txt | qrencode -o revocation-certificate.eps -t EPS.
 ```
 
-### (Optional) Prepare QR code for secret bits on primary key
+## (Optional) Prepare QR code for secret bits on primary key
 
 Same for the secret bits on the primary key.
 
@@ -412,7 +468,7 @@ Same for the secret bits on the primary key.
 $ paperkey --secret-key my-secret-key.gpg --output-type raw | base64 | qrencode -o secret-bits-on-primary-key.eps -t EPS
 ```
 
-### Print secrets
+## Print secrets
 
 This is the only part of the process that might require network connectivity. You'll have to think of some way to print the two QR codes we've created in previous steps.
 
@@ -428,32 +484,23 @@ $ lpr secret-bits-on-primary-key.eps
 $ lpr revocation-certificate.eps
 ```
 
-### Conclusion
+## Conclusion
 
-We're done! Our pgp key is ready to use.
+We're done! Our pgp key is ready to use. Flashdrive **B** contains our public keyring and secret subkeys.
 
-We have some follow-ups to take care of:
+![Flashdrive B contains two files](./images/2025-08-16_15-44.png)
+
+And we have printed the secret bits of our primary key, and printed a revocation certificate.
+
+![cat.png](./images/secret.png)
+
+There is still a lot we can do:
 1. Set up a [WKD](https://wiki.gnupg.org/WKD): domain + DNS + web hosting + HTML/CSS/JS
-  - ToDo: follow-up guide
-2. Configure email sending for your domain
-  - ToDo: follow-up guide
-3. Configure email receiving for your domain
-  - ToDo: follow-up guide
-4. ToDo: Restoring a primary key (with QR code or without)
-5. ToDo: Revoking a primary certificate
-6. ToDo: Signing an artifact
-7. ToDo: Decrypting a message
+2. Configure email sending for our domain
+3. Configure email receiving for our domain
+4. Restore a primary key from our paper copy (with QR code or without)
+5. Revoke a primary key
+6. Sign an artifact
+7. Decrypt a message
 
-### Verify restoration procedure
 
-ToDo:
-
-Once your QR codes have been printed; you should verify that they can be used to complete the restoration procedure.
-
-Take the secret key data in my-key-text-file.txt and combine it with my-public-key.gpg to reconstruct my-secret-key.gpg:
-
-  paperkey --pubring my-public-key.gpg --secrets my-key-text-file.txt --output my-secret-key.gpg
-
-If --output is not specified, the output goes to stdout. If --secret-key is not specified, the data is read from stdin so you can do things like:
-
-  gpg --export-secret-key my-key | paperkey | lpr
