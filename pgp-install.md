@@ -26,15 +26,15 @@ We will need a few things:
   - (Optional) [zbar](https://packages.fedoraproject.org/pkgs/zbar/zbar/) binary to verify that the QR code can be decoded.
 3. A printer that supports the IPP (Internet Printing Protocol)
 
-Load fedora KDE live environment onto a USB flash drive **A*** according to instructions from [https://fedoraproject.org/kde/download](https://fedoraproject.org/kde/download)
+Load fedora KDE live environment onto a USB flash drive **A** according to instructions from [https://fedoraproject.org/kde/download](https://fedoraproject.org/kde/download)
 
-Download paperkey from https://koji.fedoraproject.org/koji/packageinfo?packageID=5241 and load it onto a separate USB flash drive **B**.
+Download the paperkey binary from https://koji.fedoraproject.org/koji/packageinfo?packageID=5241 and put it on USB flash drive **B**.
 
 Restart the computer and modify the boot sequence so that flash drive **A** is first in the boot sequence.
 
 ### Generate a primary key
 
-Open a terminal and run `gpg --full-generate-key` to interactively create a primary key. Options **RSA and RSA**, **DSA and Elgamal**, and **ECC (sign and encrypt)** will actually create both a primary key and a subkey. For now, we want to create just the primary key, so **DSA (sign only)**, **RSA (sign only)**, and **ECC (sign only)** are our options. ECC may not be considered as not [quantum-resistant](https://www.netmeister.org/blog/pqc-2025-02.html), but I wasn't sure whether to choose **DSA** or **RSA**. We can choose either and be prepared to replace it in the future.
+Open a terminal and run `gpg --full-generate-key` to interactively create a primary key. Options **RSA and RSA**, **DSA and Elgamal**, and **ECC (sign and encrypt)** will actually create both a primary key and a subkey. For now, we want to create just the primary key, so **DSA (sign only)**, **RSA (sign only)**, and **ECC (sign only)** are our options. ECC may be considered as not [quantum-resistant](https://www.netmeister.org/blog/pqc-2025-02.html), but I wasn't sure whether to choose **DSA** or **RSA**. We can choose either if we are prepared to revoke that key in the future.
 
 ```
 liveuser@localhost-live:~$ gpg --full-generate-key
@@ -54,7 +54,7 @@ Please select what kind of key you want:
 Your selection? 4
 ```
 
-Select the maximum key size if you don't mind a large key. Signing will be done with the subkey, so it doesn't impact signing speed in most cases.
+Select the maximum key size if you don't mind a large key. Signing and encrypting will be done with the subkeys, so it doesn't impact anyone's speed in most cases.
 
 ```
 RSA keys may be between 1024 and 4096 bits long.
@@ -80,7 +80,7 @@ Key does not expire at all
 Is this correct? (y/N) y
 ```
 
-Enter a real name, email address, and a comment if you wish
+Enter a real name and email address. Enter a comment if you wish.
 
 ```
 GnuPG needs to construct a user ID to identify your key.
@@ -103,10 +103,10 @@ Keep in mind that the passphrase will be the same across both your primary key a
 After you've entered a passphrase, verify that the pgp key is present on the machine using the `gpg --list-public-keys` command.
 
 You can refer to the below to decode the response:
-`pub` repesents public portion of your primary key.
-`uid` is a user id associated with the key. You can have more than one user id listed in your keyring.
-`sec` represents private portion of your primary key.
-`[SC]` means that this key supports signing & certification.
+- `pub` repesents public portion of your primary key.
+- `uid` is a user id associated with the key. You can have more than one user id listed in your keyring.
+- `sec` represents private portion of your primary key.
+- `[SC]` means that this key supports signing & certification.
 
 ```
 $ gpg --list-public-keys
@@ -138,7 +138,7 @@ In the prompt, type in the `addkey` command. After entering the command, you wil
 2. Select 1 or 2 years as the expiration date.
 3. Type in `addkey` command again.
 4. Select (encrypt only) as the subkey. You can use any algorithm you would like.
-5. Select 1-2 years as the expiration date.
+5. Select 1 or 2 years as the expiration date.
 6. CTRL+D to exit after everything is done
 7. Save your changes
 
@@ -239,7 +239,7 @@ Save changes? (y/N) y
 
 If you ever lose access to your primary key, or your primary key is compromised, you can use a revocation certificate to revoke your primary key. The revocation certificate will take effect only when it is combined with the public portion of your primary key and distributed to the web. The private key is still more important to keep safe, but revocation can be your fallback mechanism. In this section, we'll generate a revocation certificate.
 
-Use the uid generated in the previous section to identify your key, and create a revocation certification for it.
+Use the **uid** provided in the previous section to identify your key, and create a revocation certification for it.
 
 ```
 $ gpg --generate-revocation 'Ward (https://huangw.dev) <ward@huangw.dev>'
@@ -278,7 +278,7 @@ Copy the terminal output starting from `-----BEGIN PGP PUBLIC KEY BLOCK-----` an
 
 ### Export your public keyring
 
-Use the same uid from previous steps to export your public keyring: This contains the public portion of your primary key and subkeys. `--output` determines where the keyring should be saved. The order of arguments passed to gpg **does** affect the results.
+Use the same **uid** from previous steps to export your public keyring: This contains the public portion of your primary key and subkeys. `--output` determines where the keyring should be saved. The order of arguments passed to gpg **does** affect the results.
 
 ```
 $ gpg --output ~/my-public-key.gpg --export 'Ward (https://huangw.dev) <ward@huangw.dev>'
@@ -293,12 +293,12 @@ First, run the `gpg --list-secret-keys --with-subkey-fingerprint` to list all se
 We are going to export the primary key only by passing the fingerprint of the primary key to a subsequent gpg command.
 
 This table explains the meanings of various acronyms from the output of the gpg command:
-`pub` repesents public portion of your primary key.
-`uid` is your user id. You can have more than one user id listed in your keyring.
-`sec` represents private portion of your primary key.
-`sub` and `ssb` are not listed here yet, but they represent public portion of subkey, and private portion of subkey, respectively.
-`[SC]` means that this key supports signing & certification.
-`[E]` means that this key can be used to encrypt.
+- `pub` repesents public portion of your primary key.
+- `uid` is your user id. You can have more than one user id listed in your keyring.
+- `sec` represents private portion of your primary key.
+- `sub` and `ssb` are not listed here yet, but they represent public portion of subkey, and private portion of subkey, respectively.
+- `[SC]` means that this key supports signing & certification.
+- `[E]` means that this key can be used to encrypt.
 
 
 ```
@@ -314,7 +314,7 @@ ssb   cv25519 2025-08-12 [E] [expires: 2026-08-12]
       C00B8798C7EA29684ADB3F41CDF21C7A234165F9
 ```
 
-To export the secret keyrind we can pass the `--export-secret-keys` option to gpg. Normally, the `--export-secret-keys` option will export all secret keys across all keyrings. When a specific fingerprint of a key is passed to gpg, then only the keyring containing that fingerprint will be exported. The scope of the export can be limited even further by add an exclamation mark **!** to the end of a fingerprint. Any subset of the keyring can be exported in this way, by passing multiple fingerprints, each followed by an exclamation mark. 
+To export the secret keyring we can pass the `--export-secret-keys` option to gpg. Normally, the `--export-secret-keys` option will export all secret keys across all keyrings. When a specific fingerprint of a key is passed to gpg, then only the keyring containing that fingerprint will be exported. The scope of the export can be further limited by adding an exclamation mark **!** to the end of a fingerprint. Any subset of the keyring can be exported in this way, by passing multiple fingerprints, each followed by an exclamation mark. 
 
 The `gpg --output my-secret-key.gpg --export-secret-keys 0BC7BC277BDA7F1149E42F6650AE2C9FD834BD5F!` command will export a primary key with fingerprint of `0BC7BC277BDA7F1149E42F6650AE2C9FD834BD5F` to a file named `my-secret-key.gpg`.
 
@@ -373,9 +373,9 @@ This is a secret key! - really delete? (y/N) y
 
 If you run the `--list-secret-keys` command again, you'll notice there is now a `#` sign after `sec`, indicating that the primary key is no longer part of this keyring.
 
-Reset your passphrase by passing the `--passwd` option to gpg along with your UID.
+Reset your passphrase by passing the `--passwd` option to gpg along with your **UID**.
 
-The `error changing passphrase: No secret key` message can be safely ignored. Gpg is just telling you that the passphrase of the primary key can't be changed since it's not present in keyring.
+The `error changing passphrase: No secret key` message can be safely ignored. **Gpg** is just telling us that the passphrase of the primary key can't be changed since it is not present in the keyring.
 
 ```
 $ gpg --passwd 'Ward (https://huangw.dev) <ward@huangw.dev>'
@@ -405,6 +405,8 @@ cat revocation-certificate-to-be-printed.txt | qrencode -o revocation-certificat
 ```
 
 ### (Optional) Prepare QR code for secret bits on primary key
+
+Same for the secret bits on the primary key.
 
 ```
 $ paperkey --secret-key my-secret-key.gpg --output-type raw | base64 | qrencode -o secret-bits-on-primary-key.eps -t EPS
