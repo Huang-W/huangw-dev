@@ -23,6 +23,7 @@ title: huangw.dev
 description: >- # this means to ignore newlines until "baseurl:"
   WH's blog.
 domain: "huangw.dev" # the domain of your site, e.g. example.com
+source: "site"
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://huangw.dev" # the base hostname & protocol for your site, e.g. http://example.com
 github_username:  huang-w
