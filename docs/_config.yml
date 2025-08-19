@@ -35,9 +35,9 @@ plugins:
   - jekyll-feed
 
 header_pages: # Pages that should be displayed in the header.
-  - docs/index.markdown
-  - docs/blog.markdown
-  - docs/about.markdown
+  - index.markdown
+  - blog.markdown
+  - about.markdown
 
 defaults:
   - scope:
@@ -46,7 +46,7 @@ defaults:
       image: true
 
 include:
-  - docs/.well-known
+  - .well-known
 
 show_dir_listinng: False # Whether to show directory listing for directories without index files.
 
