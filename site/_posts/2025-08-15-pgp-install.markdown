@@ -1,5 +1,29 @@
+---
+layout: post
+title:  "Generating a PGP key in 2025"
+date:   2025-08-15 14:12:37 -0700
+categories: jekyll update
+---
 
-# Summary
+- [Summary](#summary)
+- [Background information](#background-information)
+- [Expected Results](#expected-results)
+- [Preparation](#preparation)
+- [Generate a primary key](#generate-a-primary-key)
+- [Generate your subkeys](#generate-your-subkeys)
+- [Generate a revocation certificate](#generate-a-revocation-certificate)
+- [Export your public keyring](#export-your-public-keyring)
+- [Export the private portion of your primary key](#export-the-private-portion-of-your-primary-key)
+- [Prepare secret bits of primary key for printing](#prepare-secret-bits-of-primary-key-for-printing)
+- [Short summary/breather](#short-summary/breather)
+- [Change the passphrase on your subkeys](#change-the-passphrase-on-your-subkeys)
+- [Export secret subkeys](#export-secret-subkeys)
+- [(Optional) Prepare QR code for revocation certificate](#(optional)-prepare-qr-code-for-revocation-certificate)
+- [(Optional) Prepare QR code for secret bits on primary key](#(optional)-prepare-qr-code-for-secret-bits-on-primary-key)
+- [Print secrets](#print-secrets)
+- [Conclusion](#conclusion)
+
+## Summary
 
 The goal here is to create a pgp key from a (mostly) air gapped environment.
 
@@ -22,11 +46,11 @@ When we are done, we will have three things:
 
 The first secret subkey will have *encryption* capabilities and can be used to decrypt messages that colleagues might encrypt using the first public subkey.
 
-![Screenshot of how encryption works in pgp](./images/PGP_encryption_diagram.svg)
+![Screenshot of how encryption works in pgp](/assets/img/PGP_encryption_diagram.svg)
 
 The second secret subkey will have *signing* capabilities and can be used to generate a signature for any artifact. Consumers of the artifacts can verify the artifacts are unmodified using the second public subkey.
 
-![Screenshot of how signatures work in pgp](./images/Private_key_signing.svg)
+![Screenshot of how signatures work in pgp](/assets/img/Private_key_signing.svg)
 
 ## Preparation
 
@@ -40,11 +64,11 @@ We will need a few things:
 
 Load fedora KDE live environment onto a USB flash drive **A** according to instructions from [https://fedoraproject.org/kde/download](https://fedoraproject.org/kde/download)
 
-![Content of flash drive A](./images/2025-08-16_14-41.png)
+![Content of flash drive A](/assets/img/2025-08-16_14-41.png)
 
 Download the paperkey RPM from https://koji.fedoraproject.org/koji/packageinfo?packageID=5241 and put it on USB flash drive **B**. Make sure that the version of fedora is the same as your live environment: version is determined by the `fc` suffix at the end of the RPM.
 
-![Content of dlash drive B](./images/2025-08-16_14-51.png)
+![Content of dlash drive B](/assets/img/2025-08-16_14-51.png)
 
 Restart the computer and modify the boot sequence so that flash drive **A** is first in the boot sequence.
 
@@ -149,7 +173,7 @@ uid           [ultimate] Ward (https://huangw.dev) <ward@huangw.dev>
 
 We'll generate two subkeys next. One for encryption, and another for signing.
 
-![Fig. 7 OpenPGP certificates can contain multiple subkeys.](./images/Binding_Subkeys.svg)
+![Fig. 7 OpenPGP certificates can contain multiple subkeys.](/assets/img/Binding_Subkeys.svg)
 
 The `gpg --edit-key <uid>` command will open an interactive prompt. If you didn't try creating multiple keys, you should have only 1 keyring available to you right now, and it will be selected by default.
 
@@ -474,13 +498,23 @@ This is the only part of the process that might require network connectivity. Yo
 
 Make sure that the print information is not saved in your printer.
 
+If you are printing a QR code, make sure that scaling is set to none!!! We don't want to stretch the QR code
+
 ```
-# If you are printing a QR code, make sure that scaling is set to none!!! We don't want to stretch the QR code
 $ lpoptions -l
 $ lpoptions -o print-scaling=none
-# Print secret (maybe print a backup)
+```
+
+Print secret (maybe print a backup)
+
+```
 $ lpr secret-bits-on-primary-key.eps
-# Print revocation certificate
+```
+
+Print revocation certificate
+
+
+```
 $ lpr revocation-certificate.eps
 ```
 
@@ -488,11 +522,11 @@ $ lpr revocation-certificate.eps
 
 We're done! Our pgp key is ready to use. Flashdrive **B** contains our public keyring and secret subkeys.
 
-![Flashdrive B contains two files](./images/2025-08-16_15-44.png)
+![Flashdrive B contains two files](/assets/img/2025-08-16_15-44.png)
 
 And we have printed the secret bits of our primary key, and printed a revocation certificate.
 
-![cat.png](./images/secret.png)
+![cat.png](/assets/img/secret.png)
 
 There is still a lot we can do:
 1. Set up a [WKD](https://wiki.gnupg.org/WKD): domain + DNS + web hosting + HTML/CSS/JS
