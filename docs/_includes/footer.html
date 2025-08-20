@@ -1,18 +1,16 @@
 <footer class="site-footer h-card">
-  <data class="u-url" href="{{ "/" | relative_url }}"></data>
-
   <div class="wrapper">
-
-    <!-- <h2 class="footer-heading">{{ site.title | escape }}</h2> -->
-
-    <div class="footer-col-wrapper">
-      <div class="footer-col footer-col-1">
-        {%- if site.email -%}
-        <p>[<a class="u-email" href="mailto:{{ site.email }}">{{ site.email }}</a>]</p>
-        {%- endif -%}
-      </div>
-    </div>
-
+    {%- if page.id or page.url == "/blog/" -%}
+    [<ins><a href="/">homepage</a></ins>]
+    {%- endif -%}
+    {%- if page.id or page.url == "/" -%}
+    [<ins><a href="/blog/">blog</a></ins>]
+    {%- endif -%}
+    {%- if site.email -%}
+    [<ins><a class="u-email" href="mailto:{{ site.email }}">{{ site.email }}</a></ins>]
+    {%- endif -%}
+    {%- if page.id or page.url == "/" -%}
+    [<ins><a href="/feed.xml">RSS</a></ins>] (the “RSS” feed is actually in Atom format)
+    {%- endif -%}
   </div>
-
 </footer>

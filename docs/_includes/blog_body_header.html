@@ -1,0 +1,18 @@
+<h1 class="page-heading">{{ site.title }}</h1>
+<p>
+  <em>
+    Opinions, among other things, that someone decided were worth putting online.
+  </em>
+</p>
+<hr>
+<p>
+  [<ins><a href="/">homepage</a></ins>]
+  {%- if page.id -%}
+  [<ins><a href="/blog/">blog</a></ins>]
+  {%- endif -%}
+  {%- if site.email -%}
+  [<ins><a class="u-email" href="mailto:{{ site.email }}">{{ site.email }}</a></ins>]
+  {%- endif -%}
+  [<ins><a href="/feed.xml">RSS</a></ins>] (the “RSS” feed is actually in Atom format)
+</p>
+<hr>

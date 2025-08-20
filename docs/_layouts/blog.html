@@ -2,10 +2,9 @@
 layout: default
 ---
 
-<div class="home">
-    <h1 class="page-heading">{{ site.title }}</h1>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
 
-  {{ content }}
+  {%- include blog_body_header.html -%}
 
   {%- assign year_format = site.minima.year_format | default: "%Y" -%}
   {%- if site.posts.size > 0 -%}
@@ -26,4 +25,4 @@ layout: default
   {% endfor %}
   {%- endif -%}
 
-</div>
+</article>
