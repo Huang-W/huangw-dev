@@ -6,10 +6,10 @@ layout: blog
 title: A series of system accidents
 permalink: /blog/
 ---
-*Opinions, among other things, that someone decided were worth putting online.*
+*{{ site.description }}*
 
 ---
 
-[<ins>[homepage](/)</ins>][<ins>[ward@huangw.dev](mailto:ward@huangw.dev)</ins>][<ins>[RSS](./feed.xml)</ins>]
+[<ins>[homepage](/)</ins>][<ins>[ward@huangw.dev](mailto:ward@huangw.dev)</ins>][<ins>[RSS](./feed.xml)</ins>] (the "RSS" feed is actually in Atom format)
 
 ---
