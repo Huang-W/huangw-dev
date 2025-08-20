@@ -16,8 +16,6 @@ layout: default
     <h2 class="post-list-heading">{{ group.name }}:</h2>
     <ul>
       {% for post in group.items %}
-      {%- assign post_year = post.date | date: year_format -%}
-      {%- if post_year == "2025" -%}
       <li>
         {%- assign date_format = site.minima.date_format | default: "%Y-%m-%d" -%}
           <a href="{{ post.url | relative_url }}">{{ post.title }}</a> ({{ post.date | date: date_format }})
@@ -25,7 +23,6 @@ layout: default
           {{ post.excerpt }}
         {%- endif -%}
       </li>
-      {%- endif -%}
       {%- endfor -%}
     </ul>
   {% endfor %}
