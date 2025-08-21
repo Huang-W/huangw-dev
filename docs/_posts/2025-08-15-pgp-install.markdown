@@ -2,7 +2,7 @@
 layout: post
 title:  "Generating a PGP key in 2025"
 date:   2025-08-15 14:12:37 -0700
-categories: pgp paperkey gpg openpgp qrencode ltr zbar
+categories: pgp paperkey gpg openpgp qrencode ltr zbar encryption signature
 description: "A short guide on generating a pgp key (the right way) in 2025"
 ---
 
