@@ -1,0 +1,11 @@
+{%- if page.mermaid -%}
+<script src="/assets/js/mermaid-11-10-0.tiny.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', async function() {
+    mermaid.initialize({startOnLoad:true});
+    mermaid.run({
+      querySelector: '.language-mermaid',
+    });
+  });
+</script>
+{%- endif -%}
