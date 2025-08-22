@@ -18,7 +18,7 @@ First, a disclaimer, **this method of copying files is not secure**. Verificatio
 Another disclaimr, this guide provides a lot of explanation for a very small subet of netcat's full capabilities. Additionally, all examples are derived from netcat's man pages, just with more explanations (I added the bits on encryption). For more information about netcat, feel free to check the [netcat reference guide](https://nmap.org/book/ncat-man.html).
 
 For this exercise, we'll need some things:
-1. Two computers, both with [nmap's version of netcat](https://nmap.org/download.html) installed. It can be installed as the `nc` command. Due to licensing issues, the version of netcat that comes with Mac is the exceptionally outdated [GNU netcat](https://netcat.sourceforge.net/). Netcat also isn't strictly necessary; more on that later.
+1. Two computers, both with [nmap's version of netcat](https://nmap.org/download.html) installed. It can be installed as the `nc` command. Due to licensing issues, the version of netcat that comes with Mac is the exceptionally outdated [GNU netcat](https://netcat.sourceforge.net/).
 2. (Optional) Network connectivity to pull public pgp keyring on one laptop. Only necessary if you want to encrypt the data you're sending.
 3. (Optional) Corresponding private pgp keyring on the other laptop, if you want to decrypt any encrypted data.
 4. Modern shell on both laptops like bash or zsh.
