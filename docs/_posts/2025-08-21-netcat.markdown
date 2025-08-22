@@ -11,11 +11,11 @@ Today, we're going to make enemies of both the IT and Security departments. Toda
 
 ![nmap logo](/assets/img/nmap_logo.png)
 
-Okay, I swear I'm not really trying to spawn security alerts for the organization, but really I had very little choice. I'm just trying to reimburse these phone and internet bills, but it's almost like the company doesn't want me to: I can't plug flash drives into my work laptop; I don't want to send semi-sensitive information over email, access to various file-sharing services has been blocked, and I don't want to use my personal passwords on my work laptop. So, you can see, I really had no choice.
+Okay, I swear I'm not really trying to spawn security alerts for the organization, but really I had very little choice. I'm just trying to reimburse these phone and internet bills, but it's almost like the company doesn't want me to: I can't plug flash drives into my work laptop; I don't want to send semi-sensitive information over email, access to various file-sharing services has been blocked, I don't want to use my personal passwords on my work laptop, and I don't have a NAS setup yet. So, you can see, this is just the fastest option for me.
 
 First, a disclaimer, **this method of copying files is not secure**. Verification of received data is outside the scope of this guide, and there is no guarantee that your sent data will ever reach the target. This should be done sparingly on trusted networks only.
 
-Another disclaimr, this guide provides a lot of explanation for a very small subet of netcat's full capabilities. Additionally, all examples are derived from netcat's man pages, just with more explanations (I added the bits on encryption). For more information about netcat, feel free to check the [netcat reference guide](https://nmap.org/book/ncat-man.html).
+Another disclaimer, this guide provides a lot of explanation for a very small subet of netcat's full capabilities. Additionally, all examples are derived from netcat's man pages, just with more explanations (I added the bits on encryption). For more information about netcat, feel free to check the [netcat reference guide](https://nmap.org/book/ncat-man.html).
 
 For this exercise, we'll need some things:
 1. Two computers, both with [nmap's version of netcat](https://nmap.org/download.html) installed. It can be installed as the `nc` command. Due to licensing issues, the version of netcat that comes with Mac is the exceptionally outdated [GNU netcat](https://netcat.sourceforge.net/).
