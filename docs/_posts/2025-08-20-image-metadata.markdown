@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Removing metadata from images"
-date:   2025-08-19 13:00:00 -0700
+date:   2025-08-20 13:00:00 -0700
 categories: exiftool geotag image metadata privacy security
 description: "Why to care about metadata in images, and how to remove them."
 ---
