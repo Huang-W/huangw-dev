@@ -9,7 +9,7 @@
     {%- if site.email -%}
     [<ins><a class="u-email" href="mailto:{{ site.email }}">{{ site.email }}</a></ins>]
     {%- endif -%}
-    {%- if page.id or page.url == "/" -%}
+    {%- if page.id or page.url == "/" or page.url == "/blog/" -%}
     [<ins><a href="/feed.xml">RSS</a></ins>] (the “RSS” feed is actually in Atom format)
     {%- endif -%}
   </div>
