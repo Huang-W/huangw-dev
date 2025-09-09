@@ -30,7 +30,7 @@ So the design is simple:
 6. Configure your email client to use dovecot as IMAP server and SES as SMTP server
 7. Get a job offer hopefully, or just see how many emails you end up creating.
 
-[![email-hybrid-solution](/assets/img/SES-Home-Hybrid.webp)](/assets/img/SES-Home-Hybrid.webp)
+[![email-hybrid-solution](/assets/img/SES-Home-Hybrid-v2.webp)](/assets/img/SES-Home-Hybrid-v2.webp)
 
 I will share the terraform for cloudflare and AWS at some point, and provide more info on dovecot configuration. You may also consider using [mailcow](https://mailcow.email/) which includes dovecot among other applications.
 
