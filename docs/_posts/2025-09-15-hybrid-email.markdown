@@ -7,7 +7,7 @@ description: "Cheap option for unlimited custom domain emails (for those that do
 mermaid: true
 ---
 
-Hi, so **big disclaimer**. This post is not ready yet. But I'm currently looking for work, and I want to demonstrate my skillset a bit, so I'm just going to post the very simple architecture that I've used to more or less achieve unlimited custom domain emails.
+Hi, so this post will be edited as I work on the project. The project isn't complete yet, but I am currently looking for employment, and I want to demonstrate my skillset a bit, so I'm just going to post the very simple architecture that I've used to more or less achieve unlimited custom domain emails.
 
 Porkbun was used for domain registration because they are very cheap, and yet fully featured. Cloudflare is of course still the cheapest option, offering ICANN prices, but I did not choose them for only one reason, which is that cloudflare doesn't let you use a custom authoratative name server for your domain, locking you to cloudflare name servers. I have great respect for cloudflare still, and even configured my domain in porkbun to use cloudflare as authoratative name servers.
 
