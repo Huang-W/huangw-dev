@@ -36,6 +36,11 @@ The pfsense virtual machine is a DNS server, DHCP server, gateway, and firewall.
 
 The virtual machines see `vmbr0` as a [physical switch](https://wiki.archlinux.org/title/Network_bridge) and the network sees the virtual machines as individual machines with separate [MAC addresses](https://en.wikipedia.org/wiki/MAC_address). The proxmox machine has two [link aggregated](https://en.wikipedia.org/wiki/Link_aggregation) [SFP28](https://en.wikipedia.org/wiki/Small_Form-factor_Pluggable) ports connected with [direct attach copper](https://en.wikipedia.org/wiki/Twinaxial_cabling) cables to the ubiquiti switch. The Linksys access point runs in bridge mode with DHCP server off.
 
-Next steps are to assign VLANs to each port on the ubiquiti switch, and limit access to the virtual machines by network.
-
-That's it for this post.
+Next steps for me:
+1. Assign VLANs to each port on the ubiquiti switch
+2. Limit access to the virtual machines by (VLAN) network
+3. Split out DNS and DHCP functionality from pfsense into separate VMs
+4. Setup a NAS
+5. Configure DNS-based ad blocking
+6. Consider running a VPN so I can access parts of network outside of home
+7. Consider starting up second proxmox node
