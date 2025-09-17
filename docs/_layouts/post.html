@@ -20,8 +20,15 @@ layout: default
   </div>
   <time class="dt-published" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
     {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
-    {{ page.date | date: date_format }}
+    Originally posted: <b>{{ page.date | date: date_format }}</b>
   </time>
+  {%- if page.lastUpdated -%}
+  <br>
+  <time class="dt-published" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
+    {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
+    Last edited: <b>{{ page.lastUpdated | date: date_format }}</b>
+  </time>
+  {%- endif -%}
 
   {%- if site.disqus.shortname -%}
     {%- include disqus_comments.html -%}

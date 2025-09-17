@@ -2,6 +2,7 @@
 layout: post
 title:  "Home networking Part 1 - Gateways, Switches, and Access Points"
 date:   2025-09-08 12:00:00 -0700
+lastUpdated: 2025-09-16
 categories: pfsense proxmox networking tcp ip linksys arris modem xfinity comcast wifi ubiquiti
 description: "Taking control of networking at home."
 mermaid: true
@@ -10,12 +11,17 @@ mermaid: true
 Hi, so I have been working on my home networking design lately. There are a lot of practical reasons for doing this:
 
 1. Through increased availability of logs and metrics, you gain a better understanding of the kinds of traffic you are (unknowingly) sending.
-2. You are no longer ~~enslaved by google and cloudflare~~ reliant on public recursive name servers. Instead you query [root name servers](https://en.wikipedia.org/wiki/Root_name_server#Root_server_addresses) and [top level domain servers](https://en.wikipedia.org/wiki/List_of_Internet_top-level_domains).
+2. You are no longer ~~enslaved by google and cloudflare~~ reliant on public recursive name servers<sup>1</sup>. Instead you query [root name servers](https://en.wikipedia.org/wiki/Root_name_server#Root_server_addresses) and [top level domain servers](https://en.wikipedia.org/wiki/List_of_Internet_top-level_domains).
 3. Your wifi is faster than Xfinity's wifi. Actually, you make less DNS queries over the internet, so it can feel faster (when it works).
 4. You can block ads using DNS.
 5. You can create multiple private networks. For example, isolating the wifi network from physically-connected devices.
 6. You can decrease power consumption, while increasing local network speed.
 7. You are no longer reliant on ISP modem/gateway/access-point rentals.
+
+---
+<sup>1</sup> **Warning about DNS**: DNS queries are not encrypted; this includes queries sent to root name servers and top level domain serves, so in this design, anyone listening on your network path can see your DNS queries: this includes your internet service provider. [DoT (DNS over TLS)](https://en.wikipedia.org/wiki/DNS_over_TLS) is a network security protocol for encrypting DNS queries, but it works only for recursive DNS servers: this limits your options to Google, OpenDNS, Quad9, and among others, Cloudflare. And here lies the problem: with DoT, your DNS queries are sent over encrypted channels, but all your queries are handled by a single vendor; without DoT, your DNS queries are spread across multiple nameservers, but they are unencrypted. There have been RFCs and working groups created to address this: [rfc9539](https://datatracker.ietf.org/doc/rfc9539/) establishes a path forward for supporting encryption on authoratative name servers; The [deleg](https://datatracker.ietf.org/wg/deleg/about/) working group is trying to create a new signaling mechanism for alternative (encrypted) DNS transport mechanisms. For now, one option which could be taken is to self-host a recursive DNS resolver on a VPS (virtual private server), and send DNS queries from your home network to the VPS: this solution obfuscates DNS queries from your ISP, and allows you not to rely on public recursive name servers.
+
+---
 
 There are a few design pricinples behind this project:
 1. Make use of old hardware when possible. They say re-use is the purest form of recycling.
