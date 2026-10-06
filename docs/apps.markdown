@@ -1,15 +1,10 @@
 ---
-layout: page
-title: Web Apps
+layout: default
 permalink: /apps/
 ---
-*{{ site.description }}*
+{% include blog_body_header.html %}
 
----
-
-[<ins>[homepage](/)</ins>][<ins>[ward@huangw.dev](mailto:ward@huangw.dev)</ins>]
-
----
+### Web Apps
 
 {% if site.apps.size > 0 %}
 <ul>
