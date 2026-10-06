@@ -37,6 +37,7 @@ plugins:
 header_pages: # Pages that should be displayed in the header.
   - index.markdown
   - blog.markdown
+  - apps.markdown
   - about.markdown
 
 defaults:
@@ -77,3 +78,7 @@ exclude:
 
 feed:
   excerpt_only: true
+
+collections:
+  apps:
+    output: true
