@@ -12,6 +12,14 @@ title: Subnet Calculator
     left: 50%;
     transform: translateX(-50%);
   }
+  #subnet-table th, #subnet-table td {
+    border: 1px solid #666;
+    padding: 2px 5px !important;
+    text-align: left;
+  }
+  #subnet-table tr:nth-child(even) {
+    background-color: transparent !important;
+  }
 </style>
 
 {% include blog_body_header.html %}
@@ -36,18 +44,28 @@ A tool to help you divide and join IPv4 subnets dynamically.
     </div>
     <div id="subnet-error" style="color: #d00; margin-top: 10px; display: none;">Invalid network or mask.</div>
     <div id="subnet-warning" style="color: #666; font-style: italic; margin-top: 10px; display: none;"></div>
+    <div style="margin-top: 15px; font-size: 0.9em; display: flex; gap: 15px; flex-wrap: wrap;">
+        <label><input type="checkbox" id="col-subnet" checked> Subnet</label>
+        <label><input type="checkbox" id="col-netmask"> Netmask</label>
+        <label><input type="checkbox" id="col-range" checked> Range</label>
+        <label><input type="checkbox" id="col-useable" checked> Useable</label>
+        <label><input type="checkbox" id="col-hosts" checked> Hosts</label>
+        <label><input type="checkbox" id="col-divide" checked> Divide</label>
+        <label><input type="checkbox" id="col-join" checked> Join</label>
+    </div>
 </div>
 
 <div class="breakout" style="overflow-x: auto; margin-bottom: 30px;">
     <table id="subnet-table" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9em;">
         <thead>
             <tr style="border-bottom: 2px solid #ccc;">
-                <th style="padding: 10px;">Subnet</th>
-                <th style="padding: 10px;">Netmask</th>
-                <th style="padding: 10px;">Range</th>
-                <th style="padding: 10px;">Useable</th>
-                <th style="padding: 10px;">Hosts</th>
-                <th style="padding: 10px;">Actions</th>
+                <th id="th-subnet" style="padding: 2px 5px;">Subnet</th>
+                <th id="th-netmask" style="padding: 2px 5px;">Netmask</th>
+                <th id="th-range" style="padding: 2px 5px;">Range</th>
+                <th id="th-useable" style="padding: 2px 5px;">Useable</th>
+                <th id="th-hosts" style="padding: 2px 5px;">Hosts</th>
+                <th id="th-divide" style="padding: 2px 5px;" title="Click below to split and join subnets.">Divide</th>
+                <th id="join-header" style="padding: 2px 5px; text-align: center;" title="Click below to split and join subnets.">Join</th>
             </tr>
         </thead>
         <tbody id="subnet-tbody">

@@ -6,6 +6,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const subnetWarning = document.getElementById('subnet-warning');
     const tbody = document.getElementById('subnet-tbody');
 
+    const colSubnet = document.getElementById('col-subnet');
+    const colNetmask = document.getElementById('col-netmask');
+    const colRange = document.getElementById('col-range');
+    const colUseable = document.getElementById('col-useable');
+    const colHosts = document.getElementById('col-hosts');
+    const colDivide = document.getElementById('col-divide');
+    const colJoin = document.getElementById('col-join');
+    
+    const thSubnet = document.getElementById('th-subnet');
+    const thNetmask = document.getElementById('th-netmask');
+    const thRange = document.getElementById('th-range');
+    const thUseable = document.getElementById('th-useable');
+    const thHosts = document.getElementById('th-hosts');
+    const thDivide = document.getElementById('th-divide');
+    const thJoin = document.getElementById('join-header');
+
+    const columns = [colSubnet, colNetmask, colRange, colUseable, colHosts, colDivide, colJoin];
+    if (colSubnet) {
+        columns.forEach(cb => cb.addEventListener('change', render));
+    }
+
     let treeRoot = null;
 
     function ipToInt(ip) {
@@ -88,80 +109,139 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function joinNode(node) {
-        if (!node || !node.parent) return;
-        const p = node.parent;
-        p.left = null;
-        p.right = null;
+        if (!node) return;
+        node.left = null;
+        node.right = null;
         render();
     }
 
     function render() {
         tbody.innerHTML = '';
-        const leaves = [];
+        
+        function computeLeaves(node) {
+            if (!node.left) {
+                node.leavesCount = 1;
+                return 1;
+            }
+            node.leavesCount = computeLeaves(node.left) + computeLeaves(node.right);
+            return node.leavesCount;
+        }
 
-        function traverse(node) {
-            if (!node.left && !node.right) {
-                leaves.push(node);
+        function computeMaxDepth(node) {
+            if (!node.left) return 0;
+            return 1 + Math.max(computeMaxDepth(node.left), computeMaxDepth(node.right));
+        }
+
+        if (!treeRoot) return;
+
+        computeLeaves(treeRoot);
+        const maxDepth = computeMaxDepth(treeRoot);
+
+        const joinHeader = document.getElementById('join-header');
+        if (joinHeader) {
+            joinHeader.colSpan = maxDepth + 1;
+        }
+
+        if (thSubnet) thSubnet.style.display = colSubnet.checked ? '' : 'none';
+        if (thNetmask) thNetmask.style.display = colNetmask.checked ? '' : 'none';
+        if (thRange) thRange.style.display = colRange.checked ? '' : 'none';
+        if (thUseable) thUseable.style.display = colUseable.checked ? '' : 'none';
+        if (thHosts) thHosts.style.display = colHosts.checked ? '' : 'none';
+        if (thDivide) thDivide.style.display = colDivide.checked ? '' : 'none';
+        if (thJoin) thJoin.style.display = colJoin.checked ? '' : 'none';
+
+        function generateRows(node, depth, joinCellsToInject) {
+            if (!node.left) {
+                const tr = document.createElement('tr');
+
+                const maskInt = node.mask === 0 ? 0 : (~0 << (32 - node.mask)) >>> 0;
+                const size = Math.pow(2, 32 - node.mask);
+                
+                const firstIp = node.address;
+                const lastIp = node.address + size - 1;
+                
+                let useableFirst = firstIp;
+                let useableLast = lastIp;
+                
+                if (node.mask < 31) {
+                    useableFirst++;
+                    useableLast--;
+                }
+
+                const rangeStr = `${intToIp(firstIp)} - ${intToIp(lastIp)}`;
+                const useableStr = (node.mask >= 31) ? rangeStr : `${intToIp(useableFirst)} - ${intToIp(useableLast)}`;
+
+                let innerHTML = '';
+                if (colSubnet && colSubnet.checked) innerHTML += `<td style="font-family: monospace; white-space: nowrap;">${intToIp(node.address)}/${node.mask}</td>`;
+                if (colNetmask && colNetmask.checked) innerHTML += `<td style="font-family: monospace; white-space: nowrap;">${intToIp(maskInt)}</td>`;
+                if (colRange && colRange.checked) innerHTML += `<td style="font-family: monospace; white-space: nowrap;">${rangeStr}</td>`;
+                if (colUseable && colUseable.checked) innerHTML += `<td style="font-family: monospace; white-space: nowrap;">${useableStr}</td>`;
+                if (colHosts && colHosts.checked) innerHTML += `<td style="font-family: monospace;">${getHosts(node.mask).toLocaleString()}</td>`;
+                if (colDivide && colDivide.checked) innerHTML += `<td style="white-space: nowrap;"></td>`;
+                tr.innerHTML = innerHTML;
+
+                if (colDivide && colDivide.checked) {
+                    const divCell = tr.lastElementChild;
+                    if (node.mask < 32) {
+                        const divLink = document.createElement('a');
+                        divLink.textContent = 'Divide';
+                        divLink.href = '#';
+                        divLink.style.cssText = 'color: #0056b3; text-decoration: underline;';
+                        divLink.onclick = (e) => {
+                            e.preventDefault();
+                            splitNode(node);
+                        };
+                        divCell.appendChild(divLink);
+                    }
+                }
+
+                if (colJoin && colJoin.checked) {
+                    const padCols = maxDepth - depth;
+                    
+                    const leafTd = document.createElement('td');
+                    leafTd.colSpan = padCols + 1;
+                    leafTd.style.verticalAlign = 'middle';
+                    leafTd.style.backgroundColor = '#f4f4f4';
+                    leafTd.style.textAlign = 'left';
+                    
+                    const leafSpan = document.createElement('span');
+                    leafSpan.textContent = `/${node.mask}`;
+                    leafSpan.style.cssText = 'display: inline-block; color: #666; font-size: 0.9em; width: 100%; box-sizing: border-box;';
+                    leafTd.appendChild(leafSpan);
+                    tr.appendChild(leafTd);
+
+                    joinCellsToInject.forEach(cell => {
+                        const td = document.createElement('td');
+                        td.rowSpan = cell.rowspan;
+                        td.style.verticalAlign = 'middle';
+                        td.style.backgroundColor = '#eee';
+                        td.style.cursor = 'pointer';
+                        td.style.textAlign = 'center';
+                        td.title = `Join subnets into /${cell.nodeToJoin.mask}`;
+                        
+                        td.onmouseover = () => { td.style.backgroundColor = '#ddd'; };
+                        td.onmouseout = () => { td.style.backgroundColor = '#eee'; };
+                        td.onclick = () => joinNode(cell.nodeToJoin);
+                        
+                        td.textContent = `/${cell.nodeToJoin.mask}`;
+                        
+                        tr.appendChild(td);
+                    });
+                }
+
+                tbody.appendChild(tr);
             } else {
-                if (node.left) traverse(node.left);
-                if (node.right) traverse(node.right);
+                const joinCell = {
+                    rowspan: node.leavesCount,
+                    nodeToJoin: node
+                };
+                
+                generateRows(node.left, depth + 1, [joinCell, ...joinCellsToInject]);
+                generateRows(node.right, depth + 1, []);
             }
         }
 
-        if (treeRoot) traverse(treeRoot);
-
-        leaves.forEach(node => {
-            const tr = document.createElement('tr');
-            tr.style.borderBottom = '1px solid #eee';
-
-            const maskInt = node.mask === 0 ? 0 : (~0 << (32 - node.mask)) >>> 0;
-            const size = Math.pow(2, 32 - node.mask);
-
-            const firstIp = node.address;
-            const lastIp = node.address + size - 1;
-
-            let useableFirst = firstIp;
-            let useableLast = lastIp;
-
-            if (node.mask < 31) {
-                useableFirst++;
-                useableLast--;
-            }
-
-            const rangeStr = `${intToIp(firstIp)} - ${intToIp(lastIp)}`;
-            const useableStr = (node.mask >= 31) ? rangeStr : `${intToIp(useableFirst)} - ${intToIp(useableLast)}`;
-
-            tr.innerHTML = `
-                <td style="padding: 10px; font-family: monospace; white-space: nowrap;">${intToIp(node.address)}/${node.mask}</td>
-                <td style="padding: 10px; font-family: monospace; white-space: nowrap;">${intToIp(maskInt)}</td>
-                <td style="padding: 10px; font-family: monospace; white-space: nowrap;">${rangeStr}</td>
-                <td style="padding: 10px; font-family: monospace; white-space: nowrap;">${useableStr}</td>
-                <td style="padding: 10px; font-family: monospace;">${getHosts(node.mask).toLocaleString()}</td>
-                <td style="padding: 10px; white-space: nowrap;">
-                    <div style="display: flex; gap: 5px;"></div>
-                </td>
-            `;
-
-            const actionCell = tr.lastElementChild.firstElementChild;
-
-            if (node.mask < 32) {
-                const divBtn = document.createElement('button');
-                divBtn.textContent = 'Divide';
-                divBtn.style.cssText = 'padding: 4px 8px; cursor: pointer; border: 1px solid #ccc; background: #f8f8f8; border-radius: 4px; font-size: 0.9em;';
-                divBtn.onclick = () => splitNode(node);
-                actionCell.appendChild(divBtn);
-            }
-
-            if (node.parent) {
-                const joinBtn = document.createElement('button');
-                joinBtn.textContent = 'Join Up';
-                joinBtn.style.cssText = 'padding: 4px 8px; cursor: pointer; border: 1px solid #ccc; background: #eee; border-radius: 4px; font-size: 0.9em;';
-                joinBtn.onclick = () => joinNode(node);
-                actionCell.appendChild(joinBtn);
-            }
-
-            tbody.appendChild(tr);
-        });
+        generateRows(treeRoot, 0, []);
     }
 
     updateBtn.addEventListener('click', initNetwork);
