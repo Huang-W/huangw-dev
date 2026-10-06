@@ -1,16 +1,11 @@
 ---
-layout: page
-title: FunnIP
+layout: default
 permalink: /apps/funnip/
 description: "A tool that shows all possible notations of an IPv4 address (decimal, hex, octal)."
 ---
-*{{ site.description }}*
+{% include blog_body_header.html %}
 
----
-
-[<ins>[homepage](/)</ins>][<ins>[ward@huangw.dev](mailto:ward@huangw.dev)</ins>]
-
----
+# FunnIP
 
 Enter any valid IPv4 address notation (e.g., `127.0.0.1`, `0x7f000001`, `2130706433`) to see all its possible forms.
 
