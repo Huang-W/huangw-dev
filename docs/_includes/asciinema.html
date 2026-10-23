@@ -1,0 +1,26 @@
+{%- if page.asciinema -%}
+<script>
+    // The player script is loaded with `async` in head.html, so wait for the
+    // full page load to make sure AsciinemaPlayer is defined.
+    window.addEventListener('load', function () {
+        const prefix = 'language-asciinema-';
+        const seen = new Set();
+
+        document.querySelectorAll('code[class*="' + prefix + '"]').forEach(function (el) {
+            // Find the class that starts with the prefix and extract its suffix.
+            const cls = Array.from(el.classList).find(function (c) {
+                return c.startsWith(prefix);
+            });
+            if (!cls) return;
+
+            const suffix = cls.slice(prefix.length);
+            if (seen.has(suffix)) return; // one player per unique suffix
+            seen.add(suffix);
+
+            // Replace the rendered code block with the player.
+            el.innerHTML = '';
+            AsciinemaPlayer.create('{{ "/assets/cast/" | relative_url }}' + suffix + '.cast', el);
+        });
+    });
+</script>
+{%- endif -%}

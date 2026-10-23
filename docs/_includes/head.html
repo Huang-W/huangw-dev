@@ -17,4 +17,8 @@
   });
   </script>
   {%- endif -%}
+  {%- if page.asciinema -%}
+  <link rel="stylesheet" type="text/css" href="{{ "/assets/css/asciinema-player.css" | relative_url }}">
+  <script src="{{ "/assets/js/asciinema-player.min.js" | relative_url }}" async></script>
+  {%- endif -%}
 </head>
