@@ -1,0 +1,7 @@
+[<ins><a href="/">homepage</a></ins>]
+{%- unless page.url == "/blog/" %}[<ins><a href="/blog/">blog</a></ins>]{%- endunless %}
+{%- unless page.url == "/apps/" %}[<ins><a href="/apps/">apps</a></ins>]{%- endunless %}
+{%- if site.email -%}
+[<ins><a class="u-email" href="mailto:{{ site.email }}">{{ site.email }}</a></ins>]
+{%- endif -%}
+[<ins><a href="/feed.xml">RSS</a></ins>]

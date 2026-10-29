@@ -1,16 +1,5 @@
 <footer class="site-footer h-card">
   <div class="wrapper">
-    {%- if page.id or page.url == "/blog/" -%}
-    [<ins><a href="/">homepage</a></ins>]
-    {%- endif -%}
-    {%- if page.id or page.url == "/" -%}
-    [<ins><a href="/blog/">blog</a></ins>]
-    {%- endif -%}
-    {%- if site.email -%}
-    [<ins><a class="u-email" href="mailto:{{ site.email }}">{{ site.email }}</a></ins>]
-    {%- endif -%}
-    {%- if page.id or page.url == "/" or page.url == "/blog/" -%}
-    [<ins><a href="/feed.xml">RSS</a></ins>] (the “RSS” feed is actually in Atom format)
-    {%- endif -%}
+    {% include navigation.html %}
   </div>
 </footer>

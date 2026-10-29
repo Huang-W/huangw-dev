@@ -3,8 +3,6 @@ layout: default
 ---
 <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
 
-  {%- include blog_body_header.html -%}
-
   {%- include mermaid.html -%}
 
   {%- include asciinema.html -%}
@@ -13,7 +11,8 @@ layout: default
     <h1 class="post-title p-name" itemprop="name headline">{{ page.title | escape }}</h1>
     <p class="post-meta">
       {%- if page.author -%}
-        • <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">{{ page.author }}</span></span>
+      • <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card"
+          itemprop="name">{{ page.author }}</span></span>
       {%- endif -%}</p>
   </header>
 
@@ -33,7 +32,7 @@ layout: default
   {%- endif -%}
 
   {%- if site.disqus.shortname -%}
-    {%- include disqus_comments.html -%}
+  {%- include disqus_comments.html -%}
   {%- endif -%}
 
   <a class="u-url" href="{{ page.url | relative_url }}" hidden></a>

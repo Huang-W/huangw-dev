@@ -4,24 +4,22 @@ layout: default
 
 <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
 
-  {%- include blog_body_header.html -%}
-
   {%- assign year_format = site.minima.year_format | default: "%Y" -%}
   {%- if site.posts.size > 0 -%}
   {%- assign grouped_posts = site.posts | group_by_exp: "page", "page.date | truncate: 4, ''" -%}
   {% for group in grouped_posts %}
-    <h2 class="post-list-heading">{{ group.name }}:</h2>
-    <ul>
-      {% for post in group.items %}
-      <li>
-        {%- assign date_format = site.minima.date_format | default: "%Y-%m-%d" -%}
-          <a href="{{ post.url | relative_url }}">{{ post.title }}</a> ({{ post.date | date: date_format }})
-        {%- if site.show_excerpts -%}
-          {{ post.excerpt }}
-        {%- endif -%}
-      </li>
-      {%- endfor -%}
-    </ul>
+  <h2 class="post-list-heading">{{ group.name }}:</h2>
+  <ul>
+    {% for post in group.items %}
+    <li>
+      {%- assign date_format = site.minima.date_format | default: "%Y-%m-%d" -%}
+      <a href="{{ post.url | relative_url }}">{{ post.title }}</a> ({{ post.date | date: date_format }})
+      {%- if site.show_excerpts -%}
+      {{ post.excerpt }}
+      {%- endif -%}
+    </li>
+    {%- endfor -%}
+  </ul>
   {% endfor %}
   {%- endif -%}
 

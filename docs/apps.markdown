@@ -1,8 +1,7 @@
 ---
-layout: default
+layout: apps
 permalink: /apps/
 ---
-{% include blog_body_header.html %}
 
 ### Web Apps
 

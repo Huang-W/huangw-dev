@@ -22,7 +22,8 @@ title: Subnet Calculator
   }
 </style>
 
-{% include blog_body_header.html %}
+{% include heading.html %}
+{% include navigation.html %}
 
 # Visual Subnet Calculator
 
