@@ -18,7 +18,8 @@
   }
 }
 
-html[data-theme="dark"] #copy-btn {
+html[data-theme="dark"] #copy-btn,
+html[data-theme="dark"] #update-btn {
   background: #2a2a2a !important;
   border-color: #444 !important;
   color: #d8d8d8 !important;
