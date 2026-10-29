@@ -200,8 +200,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     const leafTd = document.createElement('td');
                     leafTd.colSpan = padCols + 1;
+                    leafTd.className = 'join-leaf';
                     leafTd.style.verticalAlign = 'middle';
-                    leafTd.style.backgroundColor = '#f4f4f4';
                     leafTd.style.textAlign = 'left';
                     
                     const leafSpan = document.createElement('span');
@@ -213,14 +213,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     joinCellsToInject.forEach(cell => {
                         const td = document.createElement('td');
                         td.rowSpan = cell.rowspan;
+                        td.className = 'join-cell';
                         td.style.verticalAlign = 'middle';
-                        td.style.backgroundColor = '#eee';
                         td.style.cursor = 'pointer';
                         td.style.textAlign = 'center';
                         td.title = `Join subnets into /${cell.nodeToJoin.mask}`;
                         
-                        td.onmouseover = () => { td.style.backgroundColor = '#ddd'; };
-                        td.onmouseout = () => { td.style.backgroundColor = '#eee'; };
                         td.onclick = () => joinNode(cell.nodeToJoin);
                         
                         td.textContent = `/${cell.nodeToJoin.mask}`;

@@ -3,8 +3,6 @@ layout: default
 permalink: /apps/funnip/
 description: "A tool that shows all possible notations of an IPv4 address (decimal, hex, octal)."
 ---
-{% include heading.html %}
-{% include navigation.html %}
 
 # FunnIP
 

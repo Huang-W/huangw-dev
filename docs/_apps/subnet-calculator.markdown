@@ -20,10 +20,13 @@ title: Subnet Calculator
   #subnet-table tr:nth-child(even) {
     background-color: transparent !important;
   }
+  #subnet-table td.join-leaf { background-color: #f4f4f4; }
+  #subnet-table td.join-cell { background-color: #eee; }
+  #subnet-table td.join-cell:hover { background-color: #ddd; }
+  html[data-theme="dark"] #subnet-table td.join-leaf { background-color: #1e1e1e; }
+  html[data-theme="dark"] #subnet-table td.join-cell { background-color: #2a2a2a; }
+  html[data-theme="dark"] #subnet-table td.join-cell:hover { background-color: #3a3a3a; }
 </style>
-
-{% include heading.html %}
-{% include navigation.html %}
 
 # Visual Subnet Calculator
 
