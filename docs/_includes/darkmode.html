@@ -1,0 +1,15 @@
+{% if site.darkmode %}
+<button class="theme-toggle" type="button" aria-label="Toggle dark mode">🌓</button>
+<script>
+    if (!window.__themeToggleBound) {
+        window.__themeToggleBound = true;
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.theme-toggle')) return;
+            var root = document.documentElement;
+            var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            root.setAttribute('data-theme', next);
+            try { localStorage.setItem('theme', next); } catch (err) { }
+        });
+    }
+</script>
+{% endif %}
