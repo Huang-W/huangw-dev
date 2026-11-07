@@ -114,3 +114,7 @@ man Image::ExifTool::TagNames
 ```
 
 That's all, folks! I hope this post has helped for that next time when you host a self-captured image on your website, share a photo on social media, or upload an image to a file sharing service!
+
+P.S. If you want to see which platforms preserve EXIF metadata, you can check out the following websites:
+- [IPTC's test results of social media sites (2019)](https://iptc.org/standards/photo-metadata/social-media-sites-photo-metadata-test-results-2019/)
+- [Usama's test results of blogging sites such as justblogged (2026)](https://justblogged.com/blog/photo-location-data-on-a-blog)
